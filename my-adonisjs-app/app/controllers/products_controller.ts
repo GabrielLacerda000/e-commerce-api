@@ -8,8 +8,6 @@ export default class ProductsController {
   }
 
   public async store({ request }: HttpContext) {
-    // const data = request.all() as ProductData
-    // const validatedData = await createProductValidator.validate(data)
     const validatedData = await request.validateUsing(createProductValidator)
     const product = await productService.create(validatedData)
 
@@ -34,10 +32,16 @@ export default class ProductsController {
   }
 
   public async destroy({ params }: HttpContext) {
-    productService.delete(params.id)
+    const productDeleted =  await productService.delete(params.id)
 
-    return  {
-      message: 'Product Deleted',
+    if(productDeleted) {
+      return {
+        message: 'Product deleted'
+      }
+    } else {
+      return {
+        message: 'Error while deleting product'
+      }
     }
   }
 }

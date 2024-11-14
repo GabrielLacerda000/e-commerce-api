@@ -1,10 +1,13 @@
 import Product from "#models/product";
 import { ProductData } from "../types/ProductData.js";
-
-
 class ProductService {
   public async listAll() {
-    return await Product.all()
+    const products = await Product.all()
+    const formattedProducts = products.map((product) => ({
+      ...product.toJSON(),
+      price: product.priceAsNumber
+    }))
+    return formattedProducts
   }
 
   public async create(data: ProductData) {
@@ -12,7 +15,12 @@ class ProductService {
   }
 
   public async findById(id: number) {
-    return await Product.findOrFail(id)
+   const product = await Product.findOrFail(id)
+   return {
+    ...product.toJSON(),
+    price: product.priceAsNumber
+   }
+
   }
 
   public async update(id: number, data: ProductData) {
@@ -23,8 +31,12 @@ class ProductService {
   }
 
   public async delete(id: number) {
-    const product = await Product.findOrFail(id)
-    await product.delete()
+    const product = await Product.find(id);
+    if (product) {
+      await product.delete();
+      return true;
+    }
+    return false;
   }
 }
 

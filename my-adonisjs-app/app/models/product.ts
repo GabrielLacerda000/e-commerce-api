@@ -14,6 +14,10 @@ export default class Product extends BaseModel {
   @column()
   public price: number
 
+  public get priceAsNumber() {
+    return typeof this.price === 'string' ? parseFloat(this.price) : this.price
+  }
+
   @column()
   public stock: number
 
